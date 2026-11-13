@@ -1,8 +1,8 @@
 # 🤗 Let's get some sorting done!
 
 # ⬇️ Imports
-import os
-from fileinput import filename
+import os, shutil
+from logging import exception
 from pathlib import Path
 
 # 📦 Variables - Global
@@ -20,6 +20,12 @@ CATEGORIES = {
 
 # ⚙️ Functions
 def get_file_cat(filename):
+    """ Finding Sorting Folder by name
+    :param filename: Filename inside of downloads folder.
+    :return:         Name of sorting folder. """
+    # ❌ Ignore Soring Folders
+    if filename.startswith('_'):
+        return None
 
     # 🔍 Checks
 
@@ -27,7 +33,7 @@ def get_file_cat(filename):
     filepath = os.path.join(PATH_DESKTOP, filename)
 
     if os.path.isdir(filepath):
-        return None
+        return '_Folders'
 
     # 📃 Files
     else:
@@ -44,14 +50,27 @@ def get_file_cat(filename):
 
 # 📗 Read all Files
 for file in os.listdir(PATH_DESKTOP):
-    cat = get_file_cat(file)
 
-# Get File Categories
+    # Get File Categories
+    dir_name = get_file_cat(file)
 
-# Create Soring Folders
+    if dir_name:
 
-# Move Files
+        # Create Soring Folders
+        dir_filepath = os.path.join(PATH_DESKTOP, dir_name)
+        if not os.path.exists(dir_filepath):
+            os.makedirs(dir_filepath)
 
-# Report Results
+        # Define Old/New Paths
+        old_path = os.path.join(PATH_DESKTOP, file)
+        new_path = os.path.join(PATH_DESKTOP, dir_name, file)
 
-# Bonus: Create a CMD-Command
+        # Move Files
+        try:
+            shutil.move(old_path, new_path)
+            print(f'➡️ {dir_name}/{file}')
+        except Exception as e:
+            print(f'❌ {dir_name}/{file} - {e}')
+    # Report Results
+
+    # Bonus: Create a CMD-Command
