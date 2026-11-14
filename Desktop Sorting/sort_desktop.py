@@ -49,28 +49,45 @@ def get_file_cat(filename):
         return '_Others'
 
 # 📗 Read all Files
-for file in os.listdir(PATH_DESKTOP):
+def sort_desktop():
+    all_files = os.listdir(PATH_DESKTOP)
+    folders   = [f for f in all_files if os.path.isdir(os.path.join(PATH_DESKTOP, f)) and not f.startswith('_')]
+    files     = [f for f in all_files if not os.path.isdir(os.path.join(PATH_DESKTOP, f))]
 
-    # Get File Categories
-    dir_name = get_file_cat(file)
+    #📋 Report to Console
+    print('-' * 40)
+    print('Scanning Desktop...')
+    print(f'📂 Folders found: {len(folders)}')
+    if files:
+        print(f'📃 Files found: {len(files)}')
+        print('\n--------------------Sorting--------------------')
+    else:
+        print('📃 Files found: 0.')
+        print('\n🤷‍♂️ Noting to sort here...')
 
-    if dir_name:
+    for file in all_files:
 
-        # Create Soring Folders
-        dir_filepath = os.path.join(PATH_DESKTOP, dir_name)
-        if not os.path.exists(dir_filepath):
-            os.makedirs(dir_filepath)
+        # Get File Categories
+        dir_name = get_file_cat(file)
 
-        # Define Old/New Paths
-        old_path = os.path.join(PATH_DESKTOP, file)
-        new_path = os.path.join(PATH_DESKTOP, dir_name, file)
+        if dir_name:
 
-        # Move Files
-        try:
-            shutil.move(old_path, new_path)
-            print(f'➡️ {dir_name}/{file}')
-        except Exception as e:
-            print(f'❌ {dir_name}/{file} - {e}')
-    # Report Results
+            # Create Soring Folders
+            dir_filepath = os.path.join(PATH_DESKTOP, dir_name)
+            if not os.path.exists(dir_filepath):
+                os.makedirs(dir_filepath)
 
-    # Bonus: Create a CMD-Command
+            # Define Old/New Paths
+            old_path = os.path.join(PATH_DESKTOP, file)
+            new_path = os.path.join(PATH_DESKTOP, dir_name, file)
+
+            # Move Files
+            try:
+                shutil.move(old_path, new_path)
+                print(f'➡️ {dir_name}/{file}')
+            except Exception as e:
+                print(f'❌ {dir_name}/{file} - {e}')
+
+#🎯 Main
+if __name__ == '__main__':
+    sort_desktop()
